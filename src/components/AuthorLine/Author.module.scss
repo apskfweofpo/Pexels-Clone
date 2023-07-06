@@ -1,0 +1,17 @@
+.author {
+  font-weight: 700;
+  color: #9b9b9b;
+  span {
+    font-weight: 700;
+    color: #b0b0b0;
+  }
+  cursor: pointer;
+  &:hover {
+    transition: 0.2s ease 0s;
+    color: white;
+    span {
+      transition: 0.2s ease 0s;
+      color: white;
+    }
+  }
+}

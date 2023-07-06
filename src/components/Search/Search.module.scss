@@ -1,0 +1,36 @@
+.wrapper {
+  display: flex;
+  width: 30rem;
+
+  position: relative;
+}
+
+.search {
+  width: 100%;
+  padding: 20px 40px 20px 20px;
+  border-radius: 8px;
+  border: 1px solid grey;
+}
+
+.cross {
+  &::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 4px;
+    background: rgb(65, 59, 59);
+    transform: rotate(-45deg);
+  }
+  &::after {
+    transform: rotate(45deg);
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 4px;
+    background: rgb(65, 59, 59);
+  }
+  cursor: pointer;
+  position: absolute;
+  top: 48%;
+  right: 2.5rem;
+}

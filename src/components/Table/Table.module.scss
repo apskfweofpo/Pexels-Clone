@@ -1,0 +1,45 @@
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: flex-start;
+}
+
+.container {
+  margin: 0 auto;
+  margin-top: 10px;
+  max-width: 70%;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 500;
+  color: black;
+  padding: 2rem 0;
+}
+
+.tableColumn {
+  display: grid;
+  grid-template: repeat(4, 1fr) / 1fr;
+  grid-row-gap: 20px;
+  padding: 0 12px;
+}
+
+.tableGrid {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.loader {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 24px;
+}
