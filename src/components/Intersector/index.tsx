@@ -11,7 +11,7 @@ const Intersector = ({
   sizePx: number;
 }) => {
   const { ref, inView, entry } = useInView({
-    threshold: 0.2,
+    threshold: 0.01,
   });
 
   useEffect(() => {

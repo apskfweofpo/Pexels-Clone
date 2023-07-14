@@ -1,0 +1,27 @@
+.wrapper {
+  text-align: center;
+  border: 1px solid gray;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-width: 4rem;
+  margin-right: 4px;
+  margin-top: 4px;
+  &:hover {
+    background-color: aliceblue;
+  }
+  h5 {
+    cursor: pointer;
+  }
+}
+
+.lite {
+  text-align: center;
+
+  h5 {
+    color: gainsboro;
+    cursor: pointer;
+    &:hover {
+      color: white;
+    }
+  }
+}

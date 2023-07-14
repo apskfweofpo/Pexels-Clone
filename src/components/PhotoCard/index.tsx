@@ -30,7 +30,9 @@ const PhotoCard = ({ photo }: { photo: IPhoto }) => {
       {show && (
         <div className={styles.tools}>
           <button className={styles.toolButton}>
-            <DownloadIcon />
+            <a href={photo.src.original} download={"photo.jpeg"}>
+              <DownloadIcon />
+            </a>
           </button>
           <button className={styles.toolButton} onClick={() => likePhoto()}>
             {liked.includes(photo.id) ? <LikedIcon /> : <NotLikedIcon />}

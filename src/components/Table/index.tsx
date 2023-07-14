@@ -3,18 +3,17 @@ import { IPhoto } from "../../utils/interfaces";
 import styles from "./Table.module.scss";
 import PhotoCard from "../PhotoCard";
 import Intersector from "../Intersector";
-import LikesService from "../../services/likesService";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { fetchPhotos } from "../../store/photos/photosSlice";
 import { nextPage } from "../../store/filters/filtersSlice";
 
-export const Table = () => {
+export const Table = ({ byCategory }: { byCategory: boolean }) => {
   const dispatch = useDispatch();
-  const { page, perPage } = useSelector((state: RootState) => state.filters);
-  const { photos, total, liked } = useSelector(
-    (state: RootState) => state.photos
+  const { page, perPage, category } = useSelector(
+    (state: RootState) => state.filters
   );
+  const { photos, liked } = useSelector((state: RootState) => state.photos);
 
   const [fetching, setFetching] = useState(false);
 
@@ -39,7 +38,9 @@ export const Table = () => {
 
   useEffect(() => {
     if (fetching) {
-      dispatch<any>(fetchPhotos({ page, perPage }));
+      dispatch<any>(
+        fetchPhotos({ page, perPage, byCategory, category: category.meta })
+      );
       dispatch(nextPage());
       setFetching(false);
     }
@@ -50,7 +51,9 @@ export const Table = () => {
   return (
     <div className={styles.container}>
       <div className={styles.table}>
-        <span className={styles.title}>Бесплатные стоковые фото</span>
+        {!byCategory && (
+          <span className={styles.title}>Бесплатные стоковые фото</span>
+        )}
         <div className={styles.tableGrid}>
           {photos &&
             getPhotoColumns(photos).map((column, index) => (
@@ -64,11 +67,7 @@ export const Table = () => {
               </div>
             ))}
         </div>
-        {fetching && (
-          <div className={styles.loader} style={{ background: "red" }}>
-            Loading...
-          </div>
-        )}
+        {fetching && <div className={styles.loader}>Loading...</div>}
         <Intersector callback={setFetching} viewflag={true} sizePx={10} />
       </div>
     </div>

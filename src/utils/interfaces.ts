@@ -5,6 +5,10 @@ export interface IPhotosResponse {
   next_page: string; //"https://api.pexels.com/v1/curated/?page=2&per_page=1";
   total_results: number;
 }
+export interface ICategory {
+  name: string;
+  meta: string;
+}
 
 export interface IPhoto {
   id: number;

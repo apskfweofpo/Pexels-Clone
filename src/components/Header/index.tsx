@@ -8,13 +8,19 @@ import axios from "axios";
 import { getRandomInt } from "../../utils/getRandomNumber";
 import AuthorLine from "../AuthorLine";
 import Intersector from "../Intersector";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import { pickRandomFromArray } from "../../utils/pickRandomFromArray";
+import { Category } from "../Category";
 
-const Header = () => {
+const Header = ({ lite }: { lite: boolean }) => {
   const [currentBackground, setCurrentBackground] = useState<IPhoto | null>(
     null
   );
 
-  const [transform, setTransform] = useState(false);
+  const { categories } = useSelector((state: RootState) => state.categories);
+
+  const [transform, setTransform] = useState(lite);
 
   useEffect(() => {
     const getHeaderPhoto = async () => {
@@ -36,41 +42,22 @@ const Header = () => {
         console.log("Get Header Photo Error: ", e);
       }
     };
-    getHeaderPhoto();
-  }, []);
-
-  useEffect(() => {
-    const getHeaderPhoto = async () => {
-      try {
-        const { data } = await axios.get<IPhotosResponse>(
-          `https://api.pexels.com/v1/curated?page=1&per_page=30`,
-          {
-            headers: {
-              Authorization:
-                "563492ad6f917000010000014640aabb4e9d420cbe1c0df7daf4c2bf",
-            },
-          }
-        );
-
-        const randomIndex = getRandomInt(data.photos.length);
-
-        setCurrentBackground(data.photos[randomIndex]);
-      } catch (e: any) {
-        console.log("Get Header Photo Error: ", e);
-      }
-    };
-    getHeaderPhoto();
+    if (!lite) getHeaderPhoto();
   }, []);
 
   return (
     <>
       <div
-        className={styles.header}
-        style={{
-          background: currentBackground
-            ? `url(${currentBackground.src.landscape}) center / contain repeat`
-            : "grey",
-        }}
+        className={lite ? "" : styles.header}
+        style={
+          lite
+            ? {}
+            : {
+                background: currentBackground
+                  ? `url(${currentBackground.src.landscape}) center / contain repeat`
+                  : "grey",
+              }
+        }
       >
         <div
           className={transform ? styles.sticky : styles.bar}
@@ -84,33 +71,49 @@ const Header = () => {
               <span className={styles.logoText}>Pexels Clone</span>
             </div>
           </Link>
-          {transform && <Search/>}
+          {transform && <Search />}
         </div>
-        <div className={styles.container}>
-          <div className={styles.search}>
-            <div className={styles.title}>
-              Лучшие бесплатные стоковые фото, изображения без роялти и видео от
-              талантливых авторов.
+        {!lite && (
+          <>
+            <div className={styles.container}>
+              <div className={styles.search}>
+                <div className={styles.title}>
+                  Лучшие бесплатные стоковые фото, изображения без роялти и
+                  видео от талантливых авторов.
+                </div>
+                <Search />
+                <div className={styles.suggested}>
+                  <h4 style={{ marginRight: "4px", color: "white" }}>
+                    Тенденции:
+                  </h4>
+
+                  {pickRandomFromArray(categories, 7).map((category) => (
+                    <div className={styles.categories}>
+                      <Category category={category} lite={true} />,
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <Search />
-            <div className={styles.suggested}>
-              Тенденции: автомобиль, еда, бизнес, природа, пляж
-            </div>
-          </div>
-        </div>
-        <div>
-          {currentBackground?.photographer && (
-            <div className={styles.authorWrapper}>
-              <AuthorLine
-                author={currentBackground?.photographer}
-                authorUrl={currentBackground.photographer_url}
+            <div>
+              {currentBackground?.photographer && (
+                <div className={styles.authorWrapper}>
+                  <AuthorLine
+                    author={currentBackground?.photographer}
+                    authorUrl={currentBackground.photographer_url}
+                  />
+                </div>
+              )}
+              <Intersector
+                callback={setTransform}
+                viewflag={false}
+                sizePx={2}
               />
             </div>
-          )}
-          <Intersector callback={setTransform} viewflag={false} sizePx={2}/>
-        </div>
-        
+          </>
+        )}
       </div>
+
       {/* {transform && (
         <>
           <div className={styles.stickyHeader}>

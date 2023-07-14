@@ -8,10 +8,19 @@ import LikesService from "../../services/likesService";
 
 export const fetchPhotos = createAsyncThunk(
   "photos/fetchPhotosStatus",
-  async (params: { page: number; perPage: number }) => {
+  async (params: {
+    page: number;
+    perPage: number;
+    category?: string;
+    byCategory: boolean;
+  }) => {
     try {
       const { data } = await axios.get<IPhotosResponse>(
-        `https://api.pexels.com/v1/curated?page=${params.page}&per_page=${params.perPage}`,
+        `https://api.pexels.com/v1/${
+          params.byCategory ? "search" : "curated"
+        }?page=${params.page}&per_page=${params.perPage}${
+          params.byCategory && `&query=${params.category}`
+        }`,
         {
           headers: {
             Authorization:
@@ -51,6 +60,9 @@ export const photosSlice = createSlice({
   name: "photos",
   initialState,
   reducers: {
+    clearPhotos: (state) => {
+      state.photos = [];
+    },
     addPhotos: (state, action: PayloadAction<IPhoto[]>) => {
       state.photos = [...state.photos, ...action.payload];
       state.liked = [
@@ -64,13 +76,9 @@ export const photosSlice = createSlice({
       if (state.liked.includes(action.payload)) {
         state.liked = state.liked.filter((like) => like !== action.payload);
         LikesService.removeLocalLike(action.payload);
-        console.log(state.liked);
-        console.log(localStorage);
       } else {
         state.liked.push(action.payload);
         LikesService.addLocalLike(action.payload);
-        console.log(state.liked);
-        console.log(localStorage);
       }
     },
   },
@@ -91,7 +99,7 @@ export const photosSlice = createSlice({
   },
 });
 
-export const { addPhotos, toggleLikePhoto } = photosSlice.actions;
+export const { addPhotos, toggleLikePhoto, clearPhotos } = photosSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCount = (state: RootState) => state.photos.photos;
