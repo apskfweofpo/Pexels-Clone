@@ -1,16 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Search.module.scss";
 import { Category } from "../Category";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { setCategory } from "../../store/filters/filtersSlice";
+import { setCategory, setSearch } from "../../store/filters/filtersSlice";
 import { useDispatch } from "react-redux";
 import { clearPhotos } from "../../store/photos/photosSlice";
-import { SEARCH_ROUTE } from "../../utils/routes";
+import { APP_ROUTE, SEARCH_ROUTE } from "../../utils/routes";
 import { useNavigate } from "react-router-dom";
 
 const Search: React.FC = () => {
-  const [searchValue, setSearchValue] = React.useState("");
+  const search = useSelector((state: RootState) => state.filters.search);
+  const [searchValue, setSearchValue] = useState(search ?? "");
   const [focus, setFocus] = React.useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -19,10 +20,11 @@ const Search: React.FC = () => {
   const clearSearch = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
 
-    setSearchValue("");
+    dispatch(setSearch(""));
   };
 
   const onSearchChange = (value: string) => {
+    dispatch(setSearch(value));
     setSearchValue(value);
   };
 
@@ -30,7 +32,8 @@ const Search: React.FC = () => {
     e.preventDefault();
     dispatch(setCategory({ meta: searchValue, name: searchValue }));
     dispatch(clearPhotos());
-    navigate(SEARCH_ROUTE + searchValue);
+    setFocus(false);
+    navigate(search.length ? SEARCH_ROUTE + search : APP_ROUTE);
   };
 
   const dropDownRef = useRef<null | HTMLDivElement>(null);
@@ -61,12 +64,12 @@ const Search: React.FC = () => {
     >
       <input
         type="text"
-        value={searchValue}
-        placeholder="Поиск бесплатных изображений 🔍"
+        value={search}
+        placeholder={search.length ? search : "Поиск бесплатных изображений 🔍"}
         className={styles.search}
         onChange={(e) => onSearchChange(e.target.value)}
       />
-      {searchValue && (
+      {search && (
         <div className={styles.cross} onClick={(e) => clearSearch(e)} />
       )}
       {focus && (
