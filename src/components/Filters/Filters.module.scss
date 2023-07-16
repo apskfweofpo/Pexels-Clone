@@ -1,0 +1,31 @@
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: 0 12rem;
+}
+
+.clear {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid grey;
+  background-color: white;
+  padding: 10px 20px;
+  position: relative;
+  min-width: 10rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+  &:hover {
+    background-color: rgb(247, 87, 87);
+    span {
+      color: white;
+    }
+  }
+  font-size: 16px;
+  font-weight: 700;
+}
