@@ -3,7 +3,7 @@ import styles from "./Category.module.scss";
 import { ICategory } from "../../utils/interfaces";
 import { useNavigate } from "react-router-dom";
 import { SEARCH_ROUTE } from "../../utils/routes";
-import { setCategory } from "../../store/filters/filtersSlice";
+import { setCategory, setSearch } from "../../store/filters/filtersSlice";
 import { useDispatch } from "react-redux";
 import { clearPhotos } from "../../store/photos/photosSlice";
 
@@ -21,6 +21,7 @@ export const Category = ({
     e.stopPropagation();
     dispatch(setCategory(category));
     dispatch(clearPhotos());
+    dispatch(setSearch(category.meta));
     navigate(SEARCH_ROUTE + category.meta);
   };
   return (
