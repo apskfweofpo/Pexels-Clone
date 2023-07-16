@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import { IPhoto } from "../../utils/interfaces";
+import { FetchingStatus, IPhoto, Orientations } from "../../utils/interfaces";
 import styles from "./Table.module.scss";
 import PhotoCard from "../PhotoCard";
 import Intersector from "../Intersector";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { fetchPhotos } from "../../store/photos/photosSlice";
+import { clearPhotos, fetchPhotos } from "../../store/photos/photosSlice";
 import { nextPage } from "../../store/filters/filtersSlice";
+import { Loader } from "../Loader";
 
 export const Table = ({ byCategory }: { byCategory: boolean }) => {
   const dispatch = useDispatch();
-  const { page, perPage, category } = useSelector(
-    (state: RootState) => state.filters
+  const { page, perPage, category, size, orientation, color, search } =
+    useSelector((state: RootState) => state.filters);
+  const { photos, liked, status } = useSelector(
+    (state: RootState) => state.photos
   );
-  const { photos, liked } = useSelector((state: RootState) => state.photos);
 
   const [fetching, setFetching] = useState(false);
 
@@ -22,12 +24,12 @@ export const Table = ({ byCategory }: { byCategory: boolean }) => {
     return () => document.removeEventListener("scroll", scrollPhotosHandler);
   }, []);
 
-  const getPhotoColumns = (items: IPhoto[]) => {
+  const getPhotoColumns = (items: IPhoto[], count: number) => {
     if (!photos) return [];
 
     const photosColumns = items.reduce(
       (acc: IPhoto[][], item: IPhoto, index: number) => {
-        const column = index % 3;
+        const column = index % count;
         acc[column] = [...(acc[column] || []), item];
         return acc;
       },
@@ -35,11 +37,23 @@ export const Table = ({ byCategory }: { byCategory: boolean }) => {
     );
     return photosColumns;
   };
+  useEffect(() => {
+    dispatch(clearPhotos());
+    setFetching(true);
+  }, [size, color, orientation, category]);
 
   useEffect(() => {
     if (fetching) {
       dispatch<any>(
-        fetchPhotos({ page, perPage, byCategory, category: category.meta })
+        fetchPhotos({
+          page,
+          perPage,
+          byCategory,
+          category: category.meta,
+          size,
+          orientation,
+          color,
+        })
       );
       dispatch(nextPage());
       setFetching(false);
@@ -51,13 +65,31 @@ export const Table = ({ byCategory }: { byCategory: boolean }) => {
   return (
     <div className={styles.container}>
       <div className={styles.table}>
-        {!byCategory && (
+        {!byCategory && status !== FetchingStatus.REJECTED && (
           <span className={styles.title}>Бесплатные стоковые фото</span>
         )}
+        {status === FetchingStatus.FULLFILLED && !photos.length && (
+          <span className={styles.title}>Ничего не найдено :(</span>
+        )}
+        {status === FetchingStatus.REJECTED && (
+          <span className={styles.title}>Ошибка загрузки :(</span>
+        )}
+
         <div className={styles.tableGrid}>
-          {photos &&
-            getPhotoColumns(photos).map((column, index) => (
-              <div className={styles.tableColumn}>
+          {orientation === Orientations.LANDSCAPE && (
+            <div className={styles.tableColumn}>
+              {photos.map((photo, index) => (
+                <PhotoCard
+                  key={photo.url}
+                  photo={{ ...photo, liked: liked.includes(photo.id) }}
+                />
+              ))}
+            </div>
+          )}
+
+          {orientation !== Orientations.LANDSCAPE &&
+            getPhotoColumns(photos, 3).map((column, index) => (
+              <div className={styles.tableColumn} key={index}>
                 {column.map((photo) => (
                   <PhotoCard
                     key={photo.url}
@@ -67,7 +99,11 @@ export const Table = ({ byCategory }: { byCategory: boolean }) => {
               </div>
             ))}
         </div>
-        {fetching && <div className={styles.loader}>Loading...</div>}
+        {status === FetchingStatus.PENDING && (
+          <div className={styles.loader}>
+            <Loader />
+          </div>
+        )}
         <Intersector callback={setFetching} viewflag={true} sizePx={10} />
       </div>
     </div>
