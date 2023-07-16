@@ -87,9 +87,10 @@ const Header = ({ lite }: { lite: boolean }) => {
                     Тенденции:
                   </h4>
 
-                  {pickRandomFromArray(categories, 7).map((category) => (
+                  {pickRandomFromArray(categories, 7).map((category, index) => (
                     <div className={styles.categories}>
-                      <Category category={category} lite={true} />,
+                      <Category category={category} lite key={index} />
+                      {index === 6 ? "" : ","}
                     </div>
                   ))}
                 </div>
@@ -113,14 +114,6 @@ const Header = ({ lite }: { lite: boolean }) => {
           </>
         )}
       </div>
-
-      {/* {transform && (
-        <>
-          <div className={styles.stickyHeader}>
-            
-          </div>
-        </>
-      )} */}
     </>
   );
 };
