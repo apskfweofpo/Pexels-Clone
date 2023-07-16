@@ -32,3 +32,21 @@ export interface IPhoto {
   liked: boolean;
   alt: string; //"Brown Rocks During Golden Hour";
 }
+
+export enum FetchingStatus {
+  PENDING = "pending",
+  REJECTED = "rejected",
+  FULLFILLED = "fulfilled",
+}
+
+export enum Orientations {
+  LANDSCAPE = "landscape",
+  PORTRAIT = "portrait",
+  SQUARE = "square",
+}
+
+export enum Sizes {
+  MEDIUM = "medium",
+  LARGE = "large",
+  SMALL = "small",
+}
