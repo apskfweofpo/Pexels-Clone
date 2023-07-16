@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IPhoto } from "../../utils/interfaces";
+import { IPhoto, Orientations } from "../../utils/interfaces";
 import styles from "./PhotoCard.module.scss";
 import AuthorLine from "../AuthorLine";
 import { ReactComponent as DownloadIcon } from "../../assets/download-svgrepo-com.svg";
@@ -13,8 +13,20 @@ import { RootState } from "../../store/store";
 const PhotoCard = ({ photo }: { photo: IPhoto }) => {
   const dispatch = useDispatch();
   const { liked } = useSelector((state: RootState) => state.photos);
+  const { orientation } = useSelector((state: RootState) => state.filters);
 
-  const sizes = ["tiny", "small", "portrait"];
+  const getOrientation = () => {
+    switch (orientation) {
+      case Orientations.LANDSCAPE:
+        return "landscape";
+      case Orientations.PORTRAIT:
+        return "portrait";
+      case Orientations.SQUARE:
+        return "medium";
+      default:
+        return "portrait";
+    }
+  };
 
   const likePhoto = () => {
     dispatch(toggleLikePhoto(photo.id));
@@ -41,7 +53,7 @@ const PhotoCard = ({ photo }: { photo: IPhoto }) => {
       )}
       <img
         className={styles.img}
-        src={photo.src.portrait}
+        src={photo.src[getOrientation()]}
         alt={photo.alt}
         loading="lazy"
       />
