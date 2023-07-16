@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { ResultPage } from "./components/ResultPage";
 import { APP_ROUTE, SEARCH_ROUTE } from "./utils/routes";
+import NotFoundPage from "./components/NotFoundPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path={APP_ROUTE} element={<MainPage />} />
           <Route path={SEARCH_ROUTE + ":category"} element={<ResultPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </Provider>
