@@ -1,9 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import { IPhoto, IPhotosResponse } from "../../utils/interfaces";
+import {
+  FetchingStatus,
+  IPhoto,
+  IPhotosResponse,
+} from "../../utils/interfaces";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import LikesService from "../../services/likesService";
 
 export const fetchPhotos = createAsyncThunk(
@@ -13,6 +16,9 @@ export const fetchPhotos = createAsyncThunk(
     perPage: number;
     category?: string;
     byCategory: boolean;
+    size: string;
+    orientation: string;
+    color: string;
   }) => {
     try {
       const { data } = await axios.get<IPhotosResponse>(
@@ -20,7 +26,9 @@ export const fetchPhotos = createAsyncThunk(
           params.byCategory ? "search" : "curated"
         }?page=${params.page}&per_page=${params.perPage}${
           params.byCategory && `&query=${params.category}`
-        }`,
+        }${params.size && `&size=${params.size}`}${
+          params.color && `&color=${params.color}`
+        }${params.orientation && `&orientation=${params.orientation}`}`,
         {
           headers: {
             Authorization:
@@ -34,12 +42,6 @@ export const fetchPhotos = createAsyncThunk(
     }
   }
 );
-
-enum FetchingStatus {
-  PENDING = "pending",
-  REJECTED = "rejected",
-  FULLFILLED = "fulfilled",
-}
 
 // Define a type for the slice state
 interface IPhotosSliceInitial {
