@@ -8,7 +8,6 @@ interface CategoriesState {
   categories: ICategory[];
 }
 
-// Define the initial state using that type
 const initialState: CategoriesState = {
   categories: [
     { name: "man", meta: "man" },
@@ -55,7 +54,6 @@ const initialState: CategoriesState = {
 
 export const categoriesSlice = createSlice({
   name: "categories",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {},
 });

@@ -42,7 +42,6 @@ export const filtersSlice = createSlice({
     setSearch: (state, action: PayloadAction<string>) => {
       state.search = action.payload;
     },
-
     setOrientation: (state, action: PayloadAction<Orientations>) => {
       state.orientation = action.payload;
     },
